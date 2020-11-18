@@ -1,11 +1,7 @@
-from django.shortcuts import render
-from rest_framework.decorators import api_view
-from rest_framework.generics import ListAPIView
-from rest_framework.response import Response
-from rest_framework.views import APIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView
 
 from .models import Product
-from .serializers import ProductSerializer
+from .serializers import ProductSerializer, ProductDetailsSerializer
 
 
 # @api_view(['GET'])
@@ -25,6 +21,15 @@ class ProductsList(ListAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
+
+class ProductDetails(RetrieveAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductDetailsSerializer
+
+
+
+    # {"id": 1, "title": "...", "description": "...",
+    #  "price": 29.19, "image": "http://....", "category": {"name": "...", "slug": "..."}}
     # obj -> {} -> '{}'
     #
     # '{}' -> {} -> obj
