@@ -1,3 +1,5 @@
+import uuid
+
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.db import models
 
@@ -46,3 +48,18 @@ class User(AbstractBaseUser):
 
     def has_module_perms(self, app_label):
         return self.is_superuser
+
+    def create_activation_code(self):
+        activation_code = str(uuid.uuid4())
+        if User.objects.filter(activation_code=activation_code).exists():
+            self.create_activation_code()
+        self.activation_code = activation_code
+        self.save()
+        return activation_code
+
+    def activate_with_code(self, code):
+        if self.activation_code != code:
+            raise Exception('Неверный код активации')
+        self.is_active = True
+        self.activation_code = ''
+        self.save()
