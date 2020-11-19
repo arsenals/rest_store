@@ -49,3 +49,13 @@ class ProductDetails(RetrieveAPIView):
 # /product/1/ - PATCH "{'title': 'Adidas Predator Accelerator'}" -> {'id': 1, "title": "Adidas Predator Accelerator", "description": "Brand new cleats"}
 #
 # Product() -> {'id': 1, 'title': 'Adidas Originals', ....}
+
+#TODO: CRUD (для продуктов)
+#TODO: пагинация
+#TODO: фильтрация
+#TODO: поиск
+#TODO: авторизация
+#TODO: активация аккаунта
+#TODO: управление правами доступа
+#TODO: корзина
+#TODO: оформление заказа

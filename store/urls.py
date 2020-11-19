@@ -8,6 +8,7 @@ from main.views import ProductsList, ProductDetails
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls')),
+    path('accounts/', include('account.urls')),
     path('products/', ProductsList.as_view()),
     path('products/<int:pk>/', ProductDetails.as_view())
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
