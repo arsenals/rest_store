@@ -54,8 +54,6 @@ class ProductDetails(RetrieveAPIView):
 #TODO: пагинация
 #TODO: фильтрация
 #TODO: поиск
-#TODO: авторизация
-#TODO: активация аккаунта
 #TODO: управление правами доступа
 #TODO: корзина
 #TODO: оформление заказа
