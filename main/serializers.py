@@ -44,6 +44,8 @@ class ProductSerializer(serializers.ModelSerializer):
 
 
 class ProductDetailsSerializer(serializers.ModelSerializer):
+    # some_field = serializers.CharField(write_only=True, read_only=True)
+
     class Meta:
         model = Product
         fields = ('id', 'title', 'description', 'price')
@@ -58,8 +60,26 @@ class ProductDetailsSerializer(serializers.ModelSerializer):
             return url
         return ''
 
+    # def get_fields(self):
+    #     fields = super().get_fields()
+    #     if self.context.get('action') == 'list':
+    #         fields.pop('description')
+    #     return fields
+
     def to_representation(self, instance):
         representation = super().to_representation(instance)
         representation['image'] = self._get_image_url(instance)
         representation['categories'] = CategorySerializer(instance.categories.all(), many=True).data
         return representation
+
+
+class CreateProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = ('id', 'title', 'description', 'price', 'categories')
+
+
+class UpdateProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        fields = ('title', 'description', 'price', 'categories')

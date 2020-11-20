@@ -1,7 +1,9 @@
-from rest_framework.generics import ListAPIView, RetrieveAPIView
+from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView, UpdateAPIView, DestroyAPIView
+from rest_framework.viewsets import ModelViewSet
 
 from .models import Product
-from .serializers import ProductSerializer, ProductDetailsSerializer
+from .permisssions import ProductPermission
+from .serializers import ProductSerializer, ProductDetailsSerializer, CreateProductSerializer, UpdateProductSerializer
 
 
 # @api_view(['GET'])
@@ -17,15 +19,50 @@ from .serializers import ProductSerializer, ProductDetailsSerializer
 #         serializer = ProductSerializer(products, many=True, context={'request': request})
 #         return Response(serializer.data)
 
-class ProductsList(ListAPIView):
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
+# class ProductsList(ListAPIView):
+#     queryset = Product.objects.all()
+#     serializer_class = ProductSerializer
+#
+#
+# class ProductDetails(RetrieveAPIView):
+#     queryset = Product.objects.all()
+#     serializer_class = ProductDetailsSerializer
+#
+#
+# class CreateProduct(CreateAPIView):
+#     queryset = Product.objects.all()
+#     serializer_class = CreateProductSerializer
+#     permission_classes = [ProductPermission, ]
+#
+#
+# class UpdateProduct(UpdateAPIView):
+#     queryset = Product.objects.all()
+#     serializer_class = UpdateProductSerializer
+#     permission_classes = [ProductPermission, ]
+#
+#
+# class DeleteProduct(DestroyAPIView):
+#     queryset = Product.objects.all()
 
 
-class ProductDetails(RetrieveAPIView):
+class ProductViewSet(ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductDetailsSerializer
 
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve']:
+            permissions = []
+        else:
+            permissions = [ProductPermission, ]
+        return [permission() for permission in permissions]
+
+    # def get_serializer_class(self):
+    #     if self.action == 'list':
+    #         return ProductSerializer
+    #     return ProductDetailsSerializer
+    #
+    # def get_serializer_context(self):
+    #     return {'action': self.action}
 
 
     # {"id": 1, "title": "...", "description": "...",
@@ -49,6 +86,8 @@ class ProductDetails(RetrieveAPIView):
 # /product/1/ - PATCH "{'title': 'Adidas Predator Accelerator'}" -> {'id': 1, "title": "Adidas Predator Accelerator", "description": "Brand new cleats"}
 #
 # Product() -> {'id': 1, 'title': 'Adidas Originals', ....}
+
+# 'create', 'list', 'retrieve', 'update', 'partial_update', 'destroy'
 
 #TODO: CRUD (для продуктов)
 #TODO: пагинация
