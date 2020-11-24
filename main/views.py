@@ -1,10 +1,10 @@
 from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView, UpdateAPIView, DestroyAPIView
 from rest_framework.viewsets import ModelViewSet
 
+from .filters import ProductFilter
 from .models import Product
 from .permisssions import ProductPermission
 from .serializers import ProductSerializer, ProductDetailsSerializer, CreateProductSerializer, UpdateProductSerializer
-
 
 # @api_view(['GET'])
 # def products_list(request):
@@ -43,11 +43,27 @@ from .serializers import ProductSerializer, ProductDetailsSerializer, CreateProd
 #
 # class DeleteProduct(DestroyAPIView):
 #     queryset = Product.objects.all()
+# CreateAPIView
+# class MyView(CreateMixin, ListMixin, GenericAPIView):
+#     def post(self):
+#         ...
+#     def get(self):
+#         ...
 
 
 class ProductViewSet(ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductDetailsSerializer
+    filterset_class = ProductFilter
+
+    # pagination_class = MyPaginationClass
+    #
+    # def get_queryset(self):
+    #     queryset = super().get_queryset()
+    #     params = self.request.query_params
+    #     print(params)
+    #     # queryset = queryset.filter(**params)
+    #     return queryset
 
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
@@ -56,6 +72,14 @@ class ProductViewSet(ModelViewSet):
             permissions = [ProductPermission, ]
         return [permission() for permission in permissions]
 
+    # def create(self, request, *args, **kwargs):
+    #     ...
+
+# class ModelViewSet(CreateModelMixin, ListModelMixin,
+#                    RetrieveModelMixin, ...,
+#                    GenericViewSet)
+
+# class ProductViewSet(CreateMixin, ListMixin, UpdateMixin, GenericViewSet)
     # def get_serializer_class(self):
     #     if self.action == 'list':
     #         return ProductSerializer
@@ -89,10 +113,9 @@ class ProductViewSet(ModelViewSet):
 
 # 'create', 'list', 'retrieve', 'update', 'partial_update', 'destroy'
 
-#TODO: CRUD (для продуктов)
-#TODO: пагинация
-#TODO: фильтрация
-#TODO: поиск
-#TODO: управление правами доступа
-#TODO: корзина
-#TODO: оформление заказа
+# TODO: пагинация
+# TODO: фильтрация
+# TODO: поиск
+# TODO: управление правами доступа
+# TODO: корзина
+# TODO: оформление заказа
