@@ -1,5 +1,7 @@
 from django.db import models
 
+from account.models import User
+
 
 class Category(models.Model):
     name = models.CharField(max_length=255, unique=True)
@@ -29,3 +31,9 @@ class Product(models.Model):
 class ProductImage(models.Model):
     product = models.ForeignKey(Product, related_name='images', on_delete=models.CASCADE)
     image = models.ImageField(upload_to='products', null=True, blank=True)
+
+class Cart(models.Model):
+    date_created = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=255, blank=True, null=True)
+    user = models.ForeignKey(User, related_name="carts", on_delete=models.CASCADE)
+    items = models.ManyToManyField(Product)
