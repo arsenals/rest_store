@@ -55,4 +55,3 @@ class LoginSerializer(serializers.Serializer):
         attrs['user'] = user
         return attrs
 
-# from rest_framework.authtoken.serializers import AuthTokenSerializer

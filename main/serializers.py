@@ -3,11 +3,6 @@ from rest_framework import serializers
 from .models import Product, Category
 
 
-# class ProductSerializer(serializers.Serializer):
-#     id = serializers.IntegerField()
-#     title = serializers.CharField()
-#     description = serializers.CharField()
-
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
@@ -15,13 +10,6 @@ class CategorySerializer(serializers.ModelSerializer):
 
 
 class ProductSerializer(serializers.ModelSerializer):
-    # image = serializers.SerializerMethodField()
-    #
-    # def get_image(self, obj):
-    #     image_obj = obj.images.first()
-    #     if image_obj is not None and image_obj.image:
-    #         return image_obj.image.url
-    #     return ''
 
     class Meta:
         model = Product
@@ -60,11 +48,6 @@ class ProductDetailsSerializer(serializers.ModelSerializer):
             return url
         return ''
 
-    # def get_fields(self):
-    #     fields = super().get_fields()
-    #     if self.context.get('action') == 'list':
-    #         fields.pop('description')
-    #     return fields
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)

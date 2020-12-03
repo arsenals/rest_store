@@ -17,9 +17,4 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls')),
     path('accounts/', include('account.urls')),
     path('', include(router.urls))
-    # path('products/', ProductsList.as_view()),
-    # path('products/create/', CreateProduct.as_view()),
-    # path('products/update/<int:pk>/', UpdateProduct.as_view()),
-    # path('products/delete/<int:pk>/', DeleteProduct.as_view()),
-    # path('products/<int:pk>/', ProductDetails.as_view())
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
