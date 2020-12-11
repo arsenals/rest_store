@@ -1,36 +1,55 @@
-from rest_framework import viewsets, generics
-from rest_framework.decorators import action
-from rest_framework.response import Response
+from django.contrib.auth import get_user_model
+from django.contrib.auth.hashers import make_password
+from rest_framework import viewsets, permissions
+from rest_framework.permissions import IsAuthenticated
 
-from cart.serializers import CartSerializer, ProductSerializer
-from main.models import Cart, Product
+from cart.models import Orders
+from main.models import Product
+from cart.serializers import ProductsSerializer, OrdersSerializer
+from cart.serializers import UserSerializer
+from cart.permissions import IsOwnerOrReadOnly
+from cart.permissions import IsStaffOrTargetUser
 
-
-class CartViewSet(viewsets.ModelViewSet):
-    model = Cart
-    serializer_class = CartSerializer
-
-    def get_queryset(self,):
-        return Cart.objects.filter(user=self.request.user)
-
-
-class ProductDetail(generics.RetrieveAPIView):
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
+User = get_user_model()
 
 
+class ProductsViewSet(viewsets.ModelViewSet):
+    queryset = Product.objects.all().order_by('-title')
+    serializer_class = ProductsSerializer
+    permission_classes = (
+        permissions.IsAuthenticatedOrReadOnly,
+        IsOwnerOrReadOnly
+    )
 
-class AddProduct(ProductDetail, viewsets.ModelViewSet):
-    @action(detail=True)
-    def add(self, request, pk):
-        cart_obj = Cart.objects.get_or_new(request)
-        product_id = pk
-        qs = Product.objects.filter(id=product_id)
-        if qs.count() == 1:
-            product_obj = qs.first()
-            if product_obj not in cart_obj.products.all():
-                cart_obj.products.add(product_obj)
-            else:
-                cart_obj.products.remove(product_obj)
-            request.session['cart_items'] = cart_obj.products.count()
-        return Response({"success":True})
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
+
+class OrdersViewSet(viewsets.ModelViewSet):
+    queryset = Orders.objects.all().order_by('-id')
+    serializer_class = OrdersSerializer
+    permission_classes = [IsAuthenticated, ]
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = self.queryset.filter(owner=user)
+        return queryset
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+    def get_permissions(self):
+        return (permissions.AllowAny() if self.request.method == 'POST' else IsStaffOrTargetUser()),
+
+    def perform_create(self, serializer):
+        password = make_password(self.request.data['password'])
+        serializer.save(password=password)
+
+    def perform_update(self, serializer):
+        password = make_password(self.request.data['password'])
+        serializer.save(password=password)

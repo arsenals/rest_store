@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Product, Category
+from .models import Product, Category, Comment
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -9,8 +9,24 @@ class CategorySerializer(serializers.ModelSerializer):
         fields = ("name", "slug")
 
 
-class ProductSerializer(serializers.ModelSerializer):
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
+        fields = ('id', 'text', 'product')
 
+    def create(self, validated_data):
+        request = self.context.get('request')
+        validated_data['author_id'] = request.user
+        comment = Comment.objects.create(**validated_data)
+        return comment
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        # representation['author'] = UserSerializer(instance.author_id).data
+        return representation
+
+
+class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ('id', 'title', 'price')
@@ -47,7 +63,6 @@ class ProductDetailsSerializer(serializers.ModelSerializer):
                 url = request.build_absolute_uri(url)
             return url
         return ''
-
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
